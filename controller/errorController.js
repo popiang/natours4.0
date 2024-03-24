@@ -29,6 +29,8 @@ const sendErrorDev = (err, res) => {
 
 const sendErrorProd = (err, res) => {
     if (err.isOperational) {
+		console.log('masuk error prod');
+		console.log(err);
         res.status(err.statusCode).json({
             status: err.status,
             message: err.message,
@@ -53,17 +55,17 @@ module.exports = (err, req, res, next) => {
         let error = { ...err };
         error.name = err.name;
 
-		if (error.name === 'CastError') {
-			error = handleCaseError(error);
-		}
+        if (error.name === 'CastError') {
+            error = handleCaseError(error);
+        }
 
-		if (error.code === 11000) {
-			error = handleDuplicateFieldsDB(error);
-		}
+        if (error.code === 11000) {
+            error = handleDuplicateFieldsDB(error);
+        }
 
-		if (error.name === 'ValidationError') {
-			error = handleValidationErrorDB(error);
-		}
+        if (error.name === 'ValidationError') {
+            error = handleValidationErrorDB(error);
+        }
 
         sendErrorProd(error, res);
     }
