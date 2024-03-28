@@ -1,6 +1,7 @@
 const express = require('express');
 const tourController = require('../controller/tourController');
 const router = express.Router();
+const authController = require('../controller/authController');
 
 // param middleware - to validate tour ID
 router.param('id', tourController.checkID);
@@ -13,12 +14,12 @@ router
     .get(tourController.aliasTop5Tours, tourController.getAllTours);
 router
     .route('/')
-    .get(tourController.getAllTours)
+    .get(authController.protect, tourController.getAllTours)
     .post(tourController.checkBody, tourController.createATour);
 router
     .route('/:id')
     .get(tourController.getATourById)
     .patch(tourController.updateATour)
-    .delete(tourController.deleteATour);
+    .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.deleteATour);
 
 module.exports = router;
